@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capability Documentation Generator: Stakeholder Showcase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            /* Base colors - ONLY allowed colors */
+            --primary-gold: #CC850A;
+            --black: #000000;
+            --white: #FFFFFF;
+            --light-gray: #EDF1F3;
+            --coral: #F2617A;
+            --sage: #6B9E78;
+            --teal: #47A1AD;
+            --purple: #634F7D;
+            --dark-teal: #003D4F;
+            --burgundy: #BD4257;
+
+            /* Text color mapping - use bright allowed colors for text */
+            --teal-text: var(--light-gray);     /* Use light-gray instead of dim teal */
+            --sage-text: var(--light-gray);     /* Use light-gray instead of dim sage */
+            --purple-text: var(--coral);        /* Use coral instead of dim purple */
+
+            /* Transparent variations for backgrounds */
+            --dark-teal-bg: rgba(0, 61, 79, 0.4);
+            --dark-teal-bg-light: rgba(0, 61, 79, 0.2);
+            --dark-teal-bg-lighter: rgba(0, 61, 79, 0.1);
+            --black-bg: rgba(0, 0, 0, 0.4);
+            --black-bg-light: rgba(0, 0, 0, 0.3);
+            --black-bg-dark: rgba(0, 0, 0, 0.5);
+            --gold-bg: rgba(204, 133, 10, 0.3);
+            --gold-bg-light: rgba(204, 133, 10, 0.1);
+            --gold-bg-lighter: rgba(204, 133, 10, 0.05);
+            --teal-bg: rgba(71, 161, 173, 0.4);
+            --teal-bg-light: rgba(71, 161, 173, 0.3);
+            --teal-bg-lighter: rgba(71, 161, 173, 0.2);
+            --teal-bg-lightest: rgba(71, 161, 173, 0.1);
+            --sage-bg: rgba(107, 158, 120, 0.3);
+            --sage-bg-light: rgba(107, 158, 120, 0.2);
+            --purple-bg: rgba(99, 79, 125, 0.3);
+            --purple-bg-light: rgba(99, 79, 125, 0.2);
+            --purple-bg-lighter: rgba(99, 79, 125, 0.1);
+            --coral-bg: rgba(242, 97, 122, 0.3);
+            --coral-bg-light: rgba(242, 97, 122, 0.2);
+            --burgundy-bg: rgba(189, 66, 87, 0.2);
+            --burgundy-bg-light: rgba(189, 66, 87, 0.15);
+
+            /* Shadow variations */
+            --gold-shadow: rgba(204, 133, 10, 0.4);
+            --gold-shadow-light: rgba(204, 133, 10, 0.3);
+            --teal-shadow: rgba(71, 161, 173, 0.6);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--dark-teal) 0%, var(--black) 40%, var(--purple) 80%, var(--burgundy) 100%);
+            color: var(--white);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        .metric-card {
+            background: var(--dark-teal-bg);
+            border-left: 4px solid var(--primary-gold);
+            transition: all 0.3s ease;
+        }
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px var(--gold-shadow-light);
+        }
+        .success-badge {
+            background: var(--sage-bg-light);
+            border: 1px solid var(--sage);
+            color: var(--white);
+        }
+        .warning-badge {
+            background: var(--coral-bg-light);
+            border: 1px solid var(--coral);
+            color: var(--coral);
+        }
+        .section-title {
+            border-bottom: 2px solid var(--primary-gold);
+            padding-bottom: 1rem;
+            color: var(--primary-gold);
+        }
+        .pipeline-box {
+            background: var(--dark-teal-bg);
+            border: 1px solid var(--teal);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+        .pipeline-arrow {
+            text-align: center;
+            color: var(--primary-gold);
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        .mural-node {
+            background: var(--dark-teal-bg);
+            border: 2px solid;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .mural-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px var(--gold-shadow);
+        }
+        .mural-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-gold);
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .graph-node {
+            background: var(--dark-teal-bg);
+            border: 3px solid;
+            border-radius: 50%;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+            margin: 0 auto;
+        }
+        .graph-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--teal-shadow);
+        }
+        .graph-edge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-gold);
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+
+        /* Interactive Click-to-Expand Styles */
+        .flow-node {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .flow-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px var(--gold-shadow-light);
+        }
+
+        .flow-node.active {
+            transform: scale(1.1);
+            box-shadow: 0 15px 50px var(--gold-shadow);
+        }
+
+        .flow-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .flow-details.expanded {
+            max-height: 1000px;
+            opacity: 1;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-in 0.2s;
+        }
+
+        .flow-arrow {
+            transition: all 0.3s ease;
+        }
+
+        .flow-arrow.active {
+            transform: scale(1.3);
+            filter: drop-shadow(0 0 10px var(--primary-gold));
+        }
+
+        .workflow-step {
+            transition: all 0.4s ease;
+            cursor: pointer;
+            opacity: 0.85;
+        }
+
+        .workflow-step:hover {
+            opacity: 1;
+            transform: translateY(-5px);
+        }
+
+        .workflow-step.active {
+            opacity: 1;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px var(--gold-shadow);
+        }
+
+        .step-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .step-content.expanded {
+            max-height: 3000px;
+            overflow: visible;
+        }
+
+        /* Smooth expand animation */
+        @keyframes expandIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .expanded > * {
+            animation: expandIn 0.3s ease-out;
+        }
+
+        /* Click indicator */
+        .clickable {
+            position: relative;
+        }
+
+        .clickable::after {
+            content: '👆 Click to explore';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: var(--primary-gold);
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+        }
+
+        .clickable:hover::after {
+            opacity: 0.7;
+        }
+
+        /* No animations - static visual design */
+
+        .clickable.active::after {
+            content: '✓ Expanded';
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="p-6 md:p-12">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Header -->
+        <header class="text-center mb-16">
+            <h1 class="text-5xl font-bold mb-3" style="color: var(--primary-gold);">Legacy-to-Modern Documentation Pipeline</h1>
+            <p class="text-2xl font-semibold mb-2" style="color: var(--coral);">Reverse Engineering Legacy Code into Actionable Business Documentation</p>
+            <p class="text-lg" style="color: var(--light-gray);">Accelerating Modernization with AI-Generated Business & Technical Documentation</p>
+        </header>
+
+        <!-- Problem Statement -->
+        <section class="mb-16 rounded-lg p-10" style="background: var(--burgundy-bg-light); border: 2px solid var(--burgundy);">
+            <h2 class="text-3xl font-bold mb-8 text-center" style="color: var(--coral);">The Modernization Dilemma: Stuck Before You Begin - The Hidden Cost of Legacy Code</h2>
+
+            <!-- Visual Bottleneck Diagram -->
+            <div class="max-w-5xl mx-auto">
+
+                <!-- Starting Point -->
+                <div class="text-center mb-8">
+                    <div class="inline-block p-6 rounded-xl" style="background: linear-gradient(135deg, var(--gold-bg-light), var(--gold-bg-lighter)); border: 4px solid var(--primary-gold); box-shadow: 0 4px 15px var(--gold-shadow);">
+                        <div class="text-5xl mb-3">📦</div>
+                        <div class="font-bold text-2xl" style="color: var(--primary-gold);">Legacy Codebase</div>
+                        <div class="text-sm mt-2" style="color: var(--light-gray);">Thousands of files, millions of lines</div>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="text-center mb-8">
+                    <div class="text-5xl" style="color: var(--primary-gold);">↓</div>
+                </div>
+
+                <!-- Two Bottlenecks Side by Side -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+
+                    <!-- Bottleneck 1: Capability Mapping -->
+                    <div class="clickable rounded-xl p-6 cursor-pointer" onclick="toggleBottleneck(1)" style="background: linear-gradient(135deg, var(--coral-bg), var(--coral-bg-light)); border: 4px solid var(--coral); box-shadow: 0 6px 20px rgba(242, 97, 122, 0.4);">
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-3">🔍</div>
+                            <div class="font-bold text-2xl mb-2" style="color: var(--white);">BOTTLENECK #1</div>
+                            <div class="font-bold text-xl mb-3" style="color: var(--coral);">Finding Business Capabilities</div>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <div class="inline-block px-4 py-2 rounded-lg" style="background: rgba(0,0,0,0.4); border: 2px solid var(--coral);">
+                                <div class="font-bold text-sm" style="color: var(--white);">👥 SME Team Required</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-sm" style="color: var(--light-gray);">Click to see why this is hard ▼</div>
+
+                        <!-- Expandable Details -->
+                        <div class="step-content mt-4" id="bottleneck-1-details">
+                            <div class="p-5 rounded-lg space-y-3" style="background: rgba(0,0,0,0.6); border: 2px solid var(--coral);">
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Manual Code Analysis</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">SMEs read thousands of lines to understand what the code does</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Scattered Knowledge</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">Business logic spread across code, docs, and people's heads</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Incomplete Mapping</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">Easy to miss critical capabilities hidden in the code</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottleneck 2: BRD Creation -->
+                    <div class="clickable rounded-xl p-6 cursor-pointer" onclick="toggleBottleneck(2)" style="background: linear-gradient(135deg, var(--burgundy-bg), var(--burgundy-bg-light)); border: 4px solid var(--burgundy); box-shadow: 0 6px 20px rgba(189, 66, 87, 0.4);">
+                        <div class="text-center mb-4">
+                            <div class="text-5xl mb-3">📝</div>
+                            <div class="font-bold text-2xl mb-2" style="color: var(--white);">BOTTLENECK #2</div>
+                            <div class="font-bold text-xl mb-3" style="color: var(--burgundy);">Creating BRD Documents</div>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <div class="inline-block px-4 py-2 rounded-lg" style="background: rgba(0,0,0,0.4); border: 2px solid var(--burgundy);">
+                                <div class="font-bold text-sm" style="color: var(--white);">👨‍💼 Senior Architects Needed</div>
+                            </div>
+                        </div>
+
+                        <div class="text-center text-sm" style="color: var(--light-gray);">Click to see why this is hard ▼</div>
+
+                        <!-- Expandable Details -->
+                        <div class="step-content mt-4" id="bottleneck-2-details">
+                            <div class="p-5 rounded-lg space-y-3" style="background: rgba(0,0,0,0.6); border: 2px solid var(--burgundy);">
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Time-Intensive Writing</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">Each capability needs comprehensive documentation</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Expert Knowledge Required</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">Only senior architects can write quality BRDs</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="text-2xl">❌</div>
+                                    <div>
+                                        <p class="font-bold mb-1" style="color: var(--white);">Consistency Challenges</p>
+                                        <p class="text-sm" style="color: var(--light-gray);">Hard to maintain quality across hundreds of documents</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Impact Summary Cards -->
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="text-center p-6 rounded-xl" style="background: linear-gradient(135deg, var(--gold-bg), var(--gold-bg-light)); border: 3px solid var(--primary-gold);">
+                        <div class="text-5xl mb-3">💰</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--primary-gold);">High Cost</div>
+                        <div class="text-sm" style="color: var(--white);">Senior architects</div>
+                        <div class="text-sm" style="color: var(--white);">Full-time effort</div>
+                    </div>
+                    <div class="text-center p-6 rounded-xl" style="background: linear-gradient(135deg, var(--coral-bg), var(--coral-bg-light)); border: 3px solid var(--coral);">
+                        <div class="text-5xl mb-3">⏱️</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--coral);">Slow Process</div>
+                        <div class="text-sm" style="color: var(--white);">Manual analysis</div>
+                        <div class="text-sm" style="color: var(--white);">Extended timelines</div>
+                    </div>
+                    <div class="text-center p-6 rounded-xl" style="background: linear-gradient(135deg, var(--burgundy-bg), var(--burgundy-bg-light)); border: 3px solid var(--burgundy);">
+                        <div class="text-5xl mb-3">⚠️</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--burgundy);">High Risk</div>
+                        <div class="text-sm" style="color: var(--white);">Incomplete data</div>
+                        <div class="text-sm" style="color: var(--white);">Human errors</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Problem Statement -->
+            <div class="mt-10 text-center p-6 rounded-xl mx-auto max-w-3xl" style="background: linear-gradient(135deg, var(--dark-teal-bg), var(--purple-bg-light)); border: 3px solid var(--primary-gold);">
+                <p class="text-2xl font-bold" style="color: var(--primary-gold);">💡 The Core Problem</p>
+                <p class="text-xl mt-3" style="color: var(--white);">Without automated capability identification and BRD generation,<br>modernization projects never get off the ground.</p>
+            </div>
+        </section>
+
+        <!-- The Solution Intro -->
+        <section class="mb-16 rounded-lg p-10" style="background: var(--dark-teal-bg-light); border: 2px solid var(--teal);">
+            <h2 class="text-3xl font-bold mb-6" style="color: var(--primary-gold);">Our Solution: Intelligent Reverse Engineering Pipeline</h2>
+            <p class="text-lg mb-6" style="color: var(--light-gray);">The Complete Pipeline - Three Connected Tools:</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div class="p-6 rounded-lg" style="background: var(--teal-bg-lighter); border-left: 4px solid var(--teal);">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--primary-gold);">🧠 CodeConcise</h3>
+                    <p class="text-sm font-semibold mb-2" style="color: var(--coral);">(The Analyzer)</p>
+                    <p style="color: var(--light-gray);">Understands your legacy code by building an intelligent knowledge graph with AI-generated summaries and identified business capabilities.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background: var(--sage-bg-lighter); border-left: 4px solid var(--sage);">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--coral);">🤖 Doc Generator Agent</h3>
+                    <p class="text-sm font-semibold mb-2" style="color: var(--coral);">(The Bridge)</p>
+                    <p style="color: var(--light-gray);">The intelligent connector that queries CodeConcise and transforms its knowledge into structured BRD documents that Twist can consume.</p>
+                </div>
+                <div class="p-6 rounded-lg" style="background: var(--purple-bg-lighter); border-left: 4px solid var(--purple);">
+                    <h3 class="text-xl font-bold mb-3" style="color: var(--burgundy);">⚡ Twist</h3>
+                    <p class="text-sm font-semibold mb-2" style="color: var(--coral);">(The Builder)</p>
+                    <p style="color: var(--light-gray);">Takes BRD documents and generates modern microservices code - but it needs properly formatted BRDs to work.</p>
+                </div>
+            </div>
+            <div class="p-6 rounded-lg text-center" style="background: linear-gradient(135deg, var(--gold-bg-light), var(--gold-bg-lighter)); border: 3px solid var(--primary-gold);">
+                <p class="text-lg font-bold" style="color: var(--primary-gold);">💡 The Key Insight:</p>
+                <p class="text-lg mt-2" style="color: var(--white);">CodeConcise has the knowledge, Twist needs documentation. Our agent is the bridge that connects them - without it, these powerful tools can't work together.</p>
+            </div>
+
+            <!-- Interactive Click-to-Expand Flow -->
+            <div class="p-8 rounded-lg" style="background: var(--dark-teal-bg-lighter);">
+                <div class="flex items-center justify-between gap-4 mb-8 relative">
+                    <!-- Node 1: Legacy Code -->
+                    <div class="flex-1 flow-node clickable rounded-xl p-6 text-center" id="node-legacy" onclick="toggleNode('legacy')" style="background: linear-gradient(135deg, var(--gold-bg), var(--gold-bg-light)); border: 3px solid var(--primary-gold);">
+                        <div class="text-5xl mb-3">📦</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--primary-gold);">Legacy Code</div>
+                        <div class="text-sm" style="color: var(--light-gray);">e.g., retail-banking repo</div>
+                        <div class="flow-details mt-4" id="details-legacy">
+                            <div class="text-xs p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p class="mb-2"><strong>Input:</strong> Existing codebase</p>
+                                <p><strong>Size:</strong> Large monolithic application</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow 1 -->
+                    <div class="flex-shrink-0">
+                        <div class="text-4xl flow-arrow" id="arrow-1" style="color: var(--primary-gold);">→</div>
+                    </div>
+
+                    <!-- Node 2: CodeConcise (Star of the Show) -->
+                    <div class="flex-1 flow-node clickable rounded-xl p-6 text-center" id="node-codeconcise" onclick="toggleNode('codeconcise')" style="background: linear-gradient(135deg, var(--teal-bg), var(--teal-bg-lighter)); border: 3px solid var(--teal);">
+                        <div class="text-5xl mb-3">🧠</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--primary-gold);">CodeConcise</div>
+                        <div class="text-sm mb-2" style="color: var(--light-gray);">Graph RAG Analysis</div>
+                        <div class="text-xs font-semibold rounded px-3 py-1 inline-block" style="background: var(--teal-bg-light); color: var(--white); border: 1px solid var(--teal);">→ Knowledge Graph</div>
+                        <div class="flow-details mt-4" id="details-codeconcise">
+                            <div class="text-xs p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p class="mb-2"><strong>Process:</strong> Builds knowledge graph from code</p>
+                                <p class="mb-2"><strong>Enriches:</strong> AI-generated summaries for code elements</p>
+                                <p><strong>Output:</strong> Enriched knowledge graph + capabilities (e.g., 56 capabilities)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow 2 -->
+                    <div class="flex-shrink-0">
+                        <div class="text-4xl flow-arrow" id="arrow-2" style="color: var(--white);">→</div>
+                    </div>
+
+                    <!-- Node 3: Doc Generator -->
+                    <div class="flex-1 flow-node clickable rounded-xl p-6 text-center" id="node-docgen" onclick="toggleNode('docgen')" style="background: linear-gradient(135deg, var(--sage-bg), var(--sage-bg-light)); border: 3px solid var(--sage);">
+                        <div class="text-5xl mb-3">🤖</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--coral);">Doc Generator</div>
+                        <div class="text-sm mb-2" style="color: var(--light-gray);">AI Agent</div>
+                        <div class="text-xs font-semibold rounded px-3 py-1 inline-block" style="background: var(--sage-bg); color: var(--white); border: 1px solid var(--sage);">→ BRD Documents</div>
+                        <div class="flow-details mt-4" id="details-docgen">
+                            <div class="text-xs p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p class="mb-2"><strong>Input:</strong> Capabilities from CodeConcise</p>
+                                <p class="mb-2"><strong>Generates:</strong> 5 BRD types per capability</p>
+                                <p><strong>Output:</strong> BRD documents (e.g., 280 BRDs for 56 capabilities)</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Arrow 3 -->
+                    <div class="flex-shrink-0">
+                        <div class="text-4xl flow-arrow" id="arrow-3" style="color: var(--white);">→</div>
+                    </div>
+
+                    <!-- Node 4: Twist -->
+                    <div class="flex-1 flow-node clickable rounded-xl p-6 text-center" id="node-twist" onclick="toggleNode('twist')" style="background: linear-gradient(135deg, var(--purple-bg), var(--purple-bg-lighter)); border: 3px solid var(--purple);">
+                        <div class="text-5xl mb-3">⚡</div>
+                        <div class="font-bold text-xl mb-2" style="color: var(--burgundy);">Twist</div>
+                        <div class="text-sm mb-2" style="color: var(--light-gray);">Code Generation</div>
+                        <div class="text-xs font-semibold rounded px-3 py-1 inline-block" style="background: var(--purple-bg); color: var(--white); border: 1px solid var(--purple);">→ Microservices</div>
+                        <div class="flow-details mt-4" id="details-twist">
+                            <div class="text-xs p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p class="mb-2"><strong>Input:</strong> BRD documents</p>
+                                <p class="mb-2"><strong>Generates:</strong> Modern microservices</p>
+                                <p><strong>Output:</strong> Production-ready code</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Insight Box -->
+                <div class="rounded-lg p-6" style="background: var(--teal-bg-lighter); border: 2px solid var(--teal);">
+                    <h4 class="text-xl font-bold mb-3" style="color: var(--primary-gold);">💡 The Power of CodeConcise</h4>
+                    <p class="mb-4" style="color: var(--light-gray);">CodeConcise doesn't just parse code - it <span class="font-bold" style="color: var(--white);">understands</span> it. By building a knowledge graph with AI-generated summaries, CodeConcise can:</p>
+                    <ul class="space-y-2 mb-4" style="color: var(--light-gray);">
+                        <li>✓ <strong style="color: var(--white);">Answer complex queries</strong> about the codebase</li>
+                        <li>✓ <strong style="color: var(--white);">Trace business capabilities</strong> to actual code elements</li>
+                        <li>✓ <strong style="color: var(--white);">Provide context-aware responses</strong> to modernizing agents</li>
+                    </ul>
+                    <p style="color: var(--light-gray);">This means the agent can query CodeConcise like asking a senior developer: <span class="font-bold italic" style="color: var(--white);">"Show me all code related to Loan Approval capability"</span> - and get accurate, comprehensive answers.</p>
+                </div>
+            </div>
+
+            <script>
+                function toggleNode(nodeId) {
+                    const node = document.getElementById('node-' + nodeId);
+                    const details = document.getElementById('details-' + nodeId);
+
+                    // Toggle active state
+                    node.classList.toggle('active');
+                    node.classList.toggle('clickable');
+                    details.classList.toggle('expanded');
+
+                    // Activate corresponding arrow
+                    const arrowMap = {
+                        'legacy': 'arrow-1',
+                        'codeconcise': 'arrow-2',
+                        'docgen': 'arrow-3'
+                    };
+
+                    if (arrowMap[nodeId]) {
+                        const arrow = document.getElementById(arrowMap[nodeId]);
+                        if (node.classList.contains('active')) {
+                            arrow.classList.add('active');
+                        } else {
+                            arrow.classList.remove('active');
+                        }
+                    }
+                }
+
+                function toggleBottleneck(bottleneckId) {
+                    const details = document.getElementById('bottleneck-' + bottleneckId + '-details');
+                    details.classList.toggle('expanded');
+                }
+            </script>
+        </section>
+
+        <!-- Understanding CodeConcise -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 section-title" style="color: var(--primary-gold);">Understanding CodeConcise</h2>
+            <p class="text-lg mb-8" style="color: var(--light-gray);">Before modernizing a legacy codebase using Twist, we need comprehensive Business Requirements Documents (BRDs) for that legacy code. To create these BRDs, we first need to understand the legacy code at a deep level. That's where CodeConcise comes in as a powerful tool.</p>
+
+            <!-- Interactive Visual Diagram - CodeConcise Internal Flow -->
+            <div class="mb-8 text-center">
+                <div class="workflow-step clickable rounded-xl p-6 inline-block" id="codeconcise-flow-main" onclick="toggleCodeConciseFlowMain()" style="background: linear-gradient(135deg, var(--teal-bg-light), var(--teal-bg-lightest)); border: 3px solid var(--teal); cursor: pointer; max-width: 600px;">
+                    <div class="text-4xl mb-3">🔄</div>
+                    <p class="font-bold text-lg" style="color: var(--primary-gold);">Click to View: CodeConcise Internal Flow</p>
+                    <p class="text-sm mt-2" style="color: var(--light-gray);">From Code to Knowledge Graph</p>
+                </div>
+                <div class="step-content mt-6" id="codeconcise-flow-main-content">
+                    <div class="p-4 rounded-lg" style="background: var(--dark-teal-bg-lighter);">
+                        <img src="showcase_artificats/CodeConcise-Graph-Rag.png" alt="CodeConcise Internal Flow" class="rounded-lg shadow-2xl mx-auto" style="width: 100%; height: auto; border: 3px solid var(--teal); display: block;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="p-8 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--primary-gold);">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--primary-gold);">What is CodeConcise?</h3>
+                    <p class="mb-4" style="color: var(--light-gray);">CodeConcise is a Graph RAG (Retrieval-Augmented Generation) platform that:</p>
+                    <ul class="space-y-3" style="color: var(--light-gray);">
+                        <li><strong>1. Ingests Legacy Code:</strong> Takes a complete codebase as input</li>
+                        <li><strong>2. Builds Knowledge Graph:</strong> Creates a semantic graph of all code relationships, dependencies, and patterns</li>
+                        <li><strong>3. Enriches with Metadata:</strong> Uses LLM to add business context, purpose, and relationships to each code element</li>
+                        <li><strong>4. Exposes APIs:</strong> Provides intelligent query interfaces to extract information</li>
+                    </ul>
+                </div>
+
+                <div class="p-8 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--primary-gold);">
+                    <h3 class="text-2xl font-bold mb-4" style="color: var(--primary-gold);">Why This Matters</h3>
+                    <p class="mb-4" style="color: var(--light-gray);">Traditional code analysis tools only understand syntax. CodeConcise understands:</p>
+                    <ul class="space-y-3" style="color: var(--light-gray);">
+                        <li>✓ <strong>Business Purpose:</strong> What each component does for the business</li>
+                        <li>✓ <strong>Relationships:</strong> How components interact and depend on each other</li>
+                        <li>✓ <strong>Patterns:</strong> Recurring architectural and design patterns</li>
+                        <li>✓ <strong>Capabilities:</strong> High-level business capabilities the system provides</li>
+                    </ul>
+                </div>
+            </div>
+
+            <script>
+                function toggleCodeConciseFlowMain() {
+                    const flow = document.getElementById('codeconcise-flow-main');
+                    const content = document.getElementById('codeconcise-flow-main-content');
+                    flow.classList.toggle('active');
+                    content.classList.toggle('expanded');
+                }
+            </script>
+        </section>
+
+        <!-- Understanding Capabilities Section -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 section-title" style="color: var(--primary-gold);">Understanding Business Capabilities</h2>
+
+            <!-- Three Simple Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <!-- Card 1: What is a Capability? -->
+                <div class="p-8 rounded-xl" style="background: linear-gradient(135deg, var(--teal-bg-light), var(--teal-bg-lighter)); border: 4px solid var(--teal);">
+                    <div class="text-5xl mb-4 text-center">📖</div>
+                    <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--primary-gold);">What is a Capability?</h3>
+                    <ul class="space-y-3" style="color: var(--light-gray);">
+                        <li>✓ <strong style="color: var(--white);">Business functions</strong> your company performs</li>
+                        <li>✓ Expressed in <strong style="color: var(--white);">business language</strong>, not tech jargon</li>
+                        <li>✓ <strong style="color: var(--white);">Example:</strong> "Loan Approval" not "Java Spring Service"</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2: Why Capabilities Matter -->
+                <div class="p-8 rounded-xl" style="background: linear-gradient(135deg, var(--sage-bg), var(--sage-bg-light)); border: 4px solid var(--sage);">
+                    <div class="text-5xl mb-4 text-center">💡</div>
+                    <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--coral);">Why Capabilities Matter</h3>
+                    <ul class="space-y-3" style="color: var(--light-gray);">
+                        <li>✓ Break down <strong style="color: var(--white);">monolithic systems</strong> logically</li>
+                        <li>✓ Align <strong style="color: var(--white);">IT work with business</strong> priorities</li>
+                        <li>✓ Modernize <strong style="color: var(--white);">one function at a time</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Card 3: CodeConcise's Role -->
+                <div class="p-8 rounded-xl" style="background: linear-gradient(135deg, var(--purple-bg), var(--purple-bg-lighter)); border: 4px solid var(--purple);">
+                    <div class="text-5xl mb-4 text-center">🧠</div>
+                    <h3 class="text-2xl font-bold mb-4 text-center" style="color: var(--burgundy);">CodeConcise's Role</h3>
+                    <ul class="space-y-3" style="color: var(--light-gray);">
+                        <li>✓ <strong style="color: var(--white);">Automatically identifies</strong> capabilities from code</li>
+                        <li>✓ <strong style="color: var(--white);">Maps code</strong> to business functions</li>
+                        <li>✓ Provides the <strong style="color: var(--white);">foundation for documentation</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Visual Diagram - Clickable to Expand -->
+            <div class="p-8 rounded-lg" style="background: var(--dark-teal-bg-lighter);">
+                <div class="text-center mb-6">
+                    <div class="workflow-step clickable rounded-xl p-6 inline-block" id="capability-structure-diagram" onclick="toggleCapabilityStructure()" style="background: linear-gradient(135deg, var(--gold-bg), var(--gold-bg-light)); border: 3px solid var(--primary-gold); cursor: pointer; max-width: 600px;">
+                        <div class="text-4xl mb-3">🖼️</div>
+                        <p class="font-bold text-lg" style="color: var(--primary-gold);">Click to View: Capability Structure Diagram</p>
+                        <p class="text-sm mt-2" style="color: var(--light-gray);">Visual breakdown of what a capability contains</p>
+                    </div>
+                </div>
+                <div class="step-content" id="capability-structure-content">
+                    <div class="p-4 rounded-lg" style="background: var(--gold-bg-lighter);">
+                        <img src="showcase_artificats/Capability.png" alt="Capability Structure Diagram" class="rounded-lg shadow-2xl mx-auto" style="width: 100%; height: auto; border: 3px solid var(--primary-gold); display: block;">
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function toggleCapabilityStructure() {
+                    const diagram = document.getElementById('capability-structure-diagram');
+                    const content = document.getElementById('capability-structure-content');
+                    diagram.classList.toggle('active');
+                    content.classList.toggle('expanded');
+                }
+            </script>
+        </section>
+
+        <!-- Remove old capability structure diagram section as it's now integrated above -->
+        <!-- Capability Structure Diagram Section -->
+        <section class="mb-16" style="display: none;">
+            <h2 class="text-3xl font-bold mb-6 section-title" style="color: var(--primary-gold);">What is a Capability?</h2>
+            <p class="text-lg mb-8" style="color: var(--light-gray);">To better understand what a capability represents in CodeConcise, view the visual diagram below that shows the structure and components of a business capability.</p>
+
+            <!-- Interactive Visual Diagram - Capability Structure -->
+
+        </section>
+
+        <!-- The Agent Workflow -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 section-title" style="color: var(--primary-gold);">How the Agent Works</h2>
+            <p class="text-lg mb-8" style="color: var(--light-gray);">The agent automatically generates 5 comprehensive documents for each capability. Click each step to explore:</p>
+
+            <!-- Interactive Click-to-Expand Workflow -->
+            <div class="p-8 rounded-lg mb-8" style="background: var(--dark-teal-bg-lighter);">
+                <h3 class="text-2xl font-bold mb-8 text-center" style="color: var(--primary-gold);">The Agent's Workflow</h3>
+
+                <!-- Step 1: Start -->
+                <div class="flex justify-center mb-6">
+                    <div class="workflow-step clickable rounded-2xl p-8 text-center max-w-md" id="step-1" onclick="toggleStep(1)" style="background: linear-gradient(135deg, var(--teal-bg-light), var(--teal-bg-lightest)); border: 3px solid var(--teal);">
+                        <div class="text-5xl mb-4">🎯</div>
+                        <div class="font-bold text-2xl mb-3" style="color: var(--primary-gold);">Step 1: Start</div>
+                        <p class="text-base" style="color: var(--light-gray);">Agent receives a <span class="font-bold" style="color: var(--white);">Capability</span> from CodeConcise</p>
+                        <div class="step-content mt-4" id="content-1">
+                            <div class="text-sm p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p class="mb-2"><strong>Example:</strong> "Loan Approval Process"</p>
+                                <p><strong>Input:</strong> Capability name and metadata from CodeConcise</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-4xl my-6" style="color: var(--primary-gold);">↓</div>
+
+                <!-- Step 2: The Smart Loop -->
+                <div class="workflow-step clickable rounded-2xl p-8 mb-6" id="step-2" onclick="toggleStep(2)" style="background: linear-gradient(135deg, var(--purple-bg), var(--purple-bg-lighter)); border: 3px solid var(--purple);">
+                    <div class="text-center mb-6">
+                        <div class="text-5xl mb-4">🔄</div>
+                        <div class="font-bold text-2xl mb-3" style="color: var(--burgundy);">Step 2: Smart Research Loop</div>
+                        <p class="text-base mb-6" style="color: var(--light-gray);">Agent intelligently gathers information until it has everything needed</p>
+                    </div>
+
+                    <div class="step-content" id="content-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto relative mb-6">
+                            <!-- AI Thinks -->
+                            <div class="rounded-xl p-6" style="background: var(--dark-teal-bg); border: 2px solid var(--teal);">
+                                <div class="text-4xl mb-3 text-center">🤔</div>
+                                <div class="font-bold text-lg mb-2 text-center" style="color: var(--white);">AI Thinks</div>
+                                <p class="text-sm text-center" style="color: var(--light-gray);">"What do I need to know about this capability?"</p>
+                                <p class="text-xs mt-2 text-center" style="color: var(--light-gray);">Plans next questions</p>
+                            </div>
+
+                            <!-- Bidirectional Arrow -->
+                            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl hidden md:block" style="color: var(--primary-gold);">⇄</div>
+
+                            <!-- AI Asks -->
+                            <div class="rounded-xl p-6" style="background: var(--dark-teal-bg); border: 2px solid var(--sage);">
+                                <div class="text-4xl mb-3 text-center">❓</div>
+                                <div class="font-bold text-lg mb-2 text-center" style="color: var(--white);">AI Asks</div>
+                                <p class="text-sm text-center" style="color: var(--light-gray);">Queries CodeConcise for specific information</p>
+                                <p class="text-xs mt-2 text-center" style="color: var(--light-gray);">Gets answers from code</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <div class="inline-block rounded-lg px-6 py-3" style="background: var(--purple-bg); border: 2px solid var(--purple);">
+                                <p class="font-bold" style="color: var(--white);">↻ Repeats until Agent has complete understanding</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center text-4xl my-6" style="color: var(--white);">↓</div>
+
+                <!-- Step 3: Generate -->
+                <div class="flex justify-center mb-6">
+                    <div class="workflow-step clickable rounded-2xl p-8 text-center max-w-md" id="step-3" onclick="toggleStep(3)" style="background: linear-gradient(135deg, var(--sage-bg), var(--sage-bg-light)); border: 3px solid var(--sage);">
+                        <div class="text-5xl mb-4">📝</div>
+                        <div class="font-bold text-2xl mb-3" style="color: var(--coral);">Step 3: Generate</div>
+                        <p class="text-base mb-3" style="color: var(--light-gray);">Creates <span class="font-bold" style="color: var(--white);">5 comprehensive documents</span></p>
+                        <div class="step-content" id="content-3">
+                            <div class="text-sm space-y-2 p-3 rounded" style="background: var(--black-bg-light); color: var(--light-gray);">
+                                <p>✓ Functional Summary</p>
+                                <p>✓ Functional Flow</p>
+                                <p>✓ Technical Summary</p>
+                                <p>✓ Insightful Summary</p>
+                                <p>✓ Architecture</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Final Result -->
+                <div class="rounded-lg p-6 mt-8" style="background: linear-gradient(90deg, var(--teal-bg-lighter), var(--purple-bg-light)); border: 2px solid var(--primary-gold);">
+                    <p class="text-center font-bold text-xl" style="color: var(--white);">🔁 Repeats for all capabilities → <span style="color: var(--white);">Complete BRD documentation</span></p>
+                </div>
+            </div>
+
+            <script>
+                function toggleStep(stepNum) {
+                    const step = document.getElementById('step-' + stepNum);
+                    const content = document.getElementById('content-' + stepNum);
+
+                    // Toggle active state
+                    step.classList.toggle('active');
+                    step.classList.toggle('clickable');
+                    content.classList.toggle('expanded');
+                }
+
+                function toggleDetailedPhases() {
+                    const button = document.getElementById('detailed-phases-button');
+                    const content = document.getElementById('detailed-phases-content');
+                    button.classList.toggle('active');
+                    content.classList.toggle('expanded');
+                }
+            </script>
+
+            <!-- Detailed Phase Breakdown - Expandable -->
+            <div class="mt-8 text-center">
+                <div class="workflow-step clickable rounded-xl p-6 inline-block" id="detailed-phases-button" onclick="toggleDetailedPhases()" style="background: linear-gradient(135deg, var(--gold-bg), var(--gold-bg-light)); border: 3px solid var(--primary-gold); cursor: pointer; max-width: 600px;">
+                    <div class="text-4xl mb-3">🔍</div>
+                    <p class="font-bold text-lg" style="color: var(--primary-gold);">Click to View: Detailed Technical Breakdown</p>
+                    <p class="text-sm mt-2" style="color: var(--light-gray);">Deep dive into the 6-phase workflow (optional)</p>
+                </div>
+            </div>
+
+            <div class="step-content mt-6" id="detailed-phases-content">
+                <h3 class="text-2xl font-bold mb-6" style="color: var(--primary-gold);">Detailed Phase Breakdown</h3>
+                <div class="space-y-4">
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--teal);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--teal); color: var(--white);">1</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--white);">INITIALIZE: Load Capabilities from CodeConcise</h4>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>What happens:</strong> Agent calls CodeConcise Capability Structure API to fetch all capabilities</p>
+                            <p style="color: var(--light-gray);"><strong>Example:</strong> Fetches 56 capabilities from retail-banking repository</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--teal);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--teal); color: var(--white);">2</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--white);">SELECT CAPABILITY: Pick Next Capability to Document</h4>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>What happens:</strong> Agent selects the next unprocessed capability from the list</p>
+                            <p style="color: var(--light-gray);"><strong>Example:</strong> Selects "User Authentication" as the first capability to document</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--purple);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--purple); color: var(--white);">3</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--white);">MODEL: Claude LLM Plans & Decides Next Action</h4>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>What happens:</strong> Claude LLM analyzes the selected capability and decides what information is needed for ALL 5 document types</p>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>Decision Logic:</strong> LLM evaluates current context and decides:</p>
+                            <div class="p-3 rounded text-sm space-y-1 mb-2" style="background: var(--black-bg);">
+                                <div style="color: var(--white);">→ Need more information? Call codeconcise_api tool with targeted queries</div>
+                                <div style="color: var(--white);">→ Have enough context? Call document_writer tool 5 times to generate all documents</div>
+                            </div>
+                            <p style="color: var(--light-gray);"><strong>Key Insight:</strong> LLM uses contextual understanding from previous responses to formulate increasingly specific follow-up queries</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--sage);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--sage); color: var(--white);">4</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--white);">TOOLS: Execute Queries & Write Documents ⭐</h4>
+                            <p class="mb-4" style="color: var(--light-gray);"><strong>What happens:</strong> LLM executes tools based on its decision from MODEL phase</p>
+
+                            <div class="p-4 rounded mb-4" style="background: var(--black-bg);">
+                                <p class="font-semibold mb-3" style="color: var(--white);">🔄 Information Gathering Loop (Iterative):</p>
+                                <div class="space-y-2 text-sm">
+                                    <div style="color: var(--primary-gold);">• Query 1: "What is the business purpose and stakeholders?" (minimal params)</div>
+                                    <div style="color: var(--primary-gold);">• Query 2: Based on response 1, ask follow-up: "What are the key workflows?" (escalate if needed)</div>
+                                    <div style="color: var(--primary-gold);">• Query 3: Based on responses 1-2, ask: "What are the technical details?" (escalate if needed)</div>
+                                    <div style="color: var(--primary-gold);">• Query 4: Based on responses 1-3, ask: "What are risks and improvements?" (escalate if needed)</div>
+                                    <div style="color: var(--primary-gold);">• Query 5: Based on all previous, ask: "What is the architecture?" (escalate if needed)</div>
+                                </div>
+                                <p class="text-xs mt-3" style="color: var(--light-gray);">Each query is contextually informed by previous responses</p>
+                            </div>
+
+                            <div class="p-4 rounded mb-4" style="background: var(--black-bg);">
+                                <p class="font-semibold mb-3" style="color: var(--white);">📝 Document Generation (When Ready):</p>
+                                <div class="space-y-2 text-sm">
+                                    <div style="color: var(--white);">• Call document_writer 5 times to write:</div>
+                                    <div style="color: var(--white);" class="ml-4">1. functional_summary.md</div>
+                                    <div style="color: var(--white);" class="ml-4">2. functional_flow.md</div>
+                                    <div style="color: var(--white);" class="ml-4">3. functional_summary.md</div>
+                                    <div style="color: var(--white);" class="ml-4">4. insightful_summary.md</div>
+                                    <div style="color: var(--white);" class="ml-4">5. architecture.md</div>
+                                </div>
+                                <p class="text-xs mt-3" style="color: var(--light-gray);">All documents use complete accumulated context</p>
+                            </div>
+
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>Information Accumulation:</strong> All query responses stored in message history, building comprehensive knowledge base</p>
+                            <p style="color: var(--light-gray);"><strong>Intelligent Escalation:</strong> If responses insufficient, LLM increases top_k and neighbours_depth for deeper analysis</p>
+                            <p class="font-bold" style="color: var(--white);">⏱️ Total time: ~3 minutes per capability</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--purple);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--purple); color: var(--white);">5</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--white);">MODEL → TOOLS Loop Repeats Until Ready</h4>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>What happens:</strong> After each CodeConcise query, control returns to MODEL phase</p>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>LLM Decision:</strong> Evaluates accumulated context and decides:</p>
+                            <div class="p-3 rounded text-sm space-y-1 mb-3" style="background: var(--black-bg);">
+                                <div style="color: var(--white);">❓ Need more information? → Loop back to TOOLS for more queries</div>
+                                <div style="color: var(--white);">✅ Have enough context? → Proceed to document generation</div>
+                            </div>
+                            <p style="color: var(--light-gray);"><strong>Contextual Understanding:</strong> Each iteration builds on previous responses, making queries more specific and targeted</p>
+                            <p style="color: var(--light-gray);"><strong>Result:</strong> Comprehensive knowledge base accumulated in message history</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-lg" style="background: var(--dark-teal-bg-light); border-left: 4px solid var(--coral);">
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold" style="background: var(--coral); color: var(--white);">6</div>
+                        <div>
+                            <h4 class="text-xl font-bold mb-2" style="color: var(--coral);">QA COVERAGE GATE: Validate & Optimize</h4>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>What happens:</strong> Agent verifies all 5 documents were generated successfully and meet quality criteria</p>
+                            <div class="p-3 rounded text-sm space-y-2 mb-3" style="background: var(--black-bg);">
+                                <p class="font-semibold" style="color: var(--coral);">Quality Checks:</p>
+                                <div style="color: var(--coral);">✓ All 5 documents exist</div>
+                                <div style="color: var(--coral);">✓ Each meets minimum word count</div>
+                                <div style="color: var(--coral);">✓ Content requirements satisfied</div>
+                            </div>
+                            <p class="mb-2" style="color: var(--light-gray);"><strong>If Successful:</strong> Clears message history after capability completion to prevent context bloat (key to 29.6% performance improvement!)</p>
+                            <p style="color: var(--light-gray);"><strong>If Failed:</strong> Escalates query parameters and retries document generation, resulting in 99.5% success rate (555/556 documents)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 p-6 rounded-lg border-l-4 border-cyan-500 mt-6">
+                    <p class="text-gray-300 mb-3"><strong>🔄 The Complete Flow:</strong></p>
+                    <div class="text-sm space-y-2 mb-3">
+                        <div class="text-cyan-300">1. SELECT CAPABILITY → 2. MODEL (plan info gathering)</div>
+                        <div class="text-cyan-300">3. TOOLS (query CodeConcise) → 4. MODEL (decide: more queries or write docs?)</div>
+                        <div class="text-cyan-300">5. If more info needed: Loop back to TOOLS</div>
+                        <div class="text-cyan-300">6. If ready: TOOLS (call document_writer 5 times)</div>
+                        <div class="text-cyan-300">7. QA COVERAGE GATE (validate & clear history)</div>
+                        <div class="text-cyan-300">8. Repeat for next capability</div>
+                    </div>
+                    <p class="text-gray-300"><strong>Final Result:</strong> 5 structured documents per capability (e.g., 56 capabilities × 5 documents = 280 total documents)</p>
+                    <p class="text-gray-300 mt-3"><strong>Total Time:</strong> ~3.5 hours for all 56 capabilities (57% faster than initial implementation)</p>
+                </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- What Gets Generated -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold mb-6 section-title" style="color: var(--primary-gold);">What Gets Generated - 5 Documents Per Capability</h2>
+            <p class="text-lg mb-8" style="color: var(--light-gray);">Click each document type to see a sample from "Loan Application Services":</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Document 1 -->
+                <div class="workflow-step clickable p-6 rounded-lg" id="doc-1" onclick="toggleDoc(1)" style="background: var(--dark-teal-bg-light); border-top: 4px solid var(--teal);">
+                    <h4 class="font-bold mb-3" style="color: var(--primary-gold);">📋 Document 1</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Functional Summary</p>
+                    <p class="text-sm" style="color: var(--light-gray);">Business purpose, stakeholders, use cases</p>
+                    <div class="step-content mt-4" id="doc-1-content">
+                        <div class="p-3 rounded text-xs" style="background: var(--black-bg-dark); color: var(--light-gray); max-height: 200px; overflow-y: auto;">
+                            <p class="font-bold mb-2" style="color: var(--white);">Sample: Loan Application Services</p>
+                            <p class="mb-2"><strong>Business Purpose:</strong> Core digital backbone for managing loan applications, automating the entire process from submission through lifecycle control.</p>
+                            <p class="mb-2"><strong>Key Stakeholders:</strong> Bank Customers, Loan Officers, Branch Staff, Customer Service Representatives</p>
+                            <p><strong>Primary Value:</strong> Centralized, automated system handling applications at scale with fraud prevention and consistent business rules.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 2 -->
+                <div class="workflow-step clickable p-6 rounded-lg" id="doc-2" onclick="toggleDoc(2)" style="background: var(--dark-teal-bg-light); border-top: 4px solid var(--purple);">
+                    <h4 class="font-bold mb-3" style="color: var(--burgundy);">🔄 Document 2</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Functional Flow</p>
+                    <p class="text-sm" style="color: var(--light-gray);">Process workflows, component interactions</p>
+                    <div class="step-content mt-4" id="doc-2-content">
+                        <div class="p-3 rounded text-xs" style="background: var(--black-bg-dark); color: var(--light-gray); max-height: 200px; overflow-y: auto;">
+                            <p class="font-bold mb-2" style="color: var(--white);">Sample: Loan Application Services</p>
+                            <p class="mb-2"><strong>Phase 1:</strong> Loan Product Preparation - Create products, validate, cache invalidation</p>
+                            <p class="mb-2"><strong>Phase 2:</strong> Application Submission - Customer initiation, data collection, validation chain (@CheckUserExistence, @CheckLoanExistence, @CheckApplicationAbsence)</p>
+                            <p><strong>Phase 3:</strong> Processing & Notification - Application storage, cache update, automatic customer notifications</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 3 -->
+                <div class="workflow-step clickable p-6 rounded-lg" id="doc-3" onclick="toggleDoc(3)" style="background: var(--dark-teal-bg-light); border-top: 4px solid var(--sage);">
+                    <h4 class="font-bold mb-3" style="color: var(--coral);">⚙️ Document 3</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Technical Summary</p>
+                    <p class="text-sm" style="color: var(--light-gray);">Implementation details, algorithms, patterns</p>
+                    <div class="step-content mt-4" id="doc-3-content">
+                        <div class="p-3 rounded text-xs" style="background: var(--black-bg-dark); color: var(--light-gray); max-height: 200px; overflow-y: auto;">
+                            <p class="font-bold mb-2" style="color: var(--white);">Sample: Loan Application Services</p>
+                            <p class="mb-2"><strong>Validation Chain Algorithm:</strong> AOP-based validation using @CheckUserExistence, @CheckLoanExistence, @CheckApplicationAbsence annotations</p>
+                            <p class="mb-2"><strong>Caching Strategy:</strong> Two-tier approach - Spring @Cacheable for application-level + Redis distributed caching</p>
+                            <p><strong>Tech Stack:</strong> Spring Boot, ModelMapper, Redis, Feign clients for microservices communication</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 4 -->
+                <div class="workflow-step clickable p-6 rounded-lg" id="doc-4" onclick="toggleDoc(4)" style="background: var(--dark-teal-bg-light); border-top: 4px solid var(--coral);">
+                    <h4 class="font-bold mb-3" style="color: var(--coral);">💡 Document 4</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Insightful Summary</p>
+                    <p class="text-sm" style="color: var(--light-gray);">Risks, improvements, recommendations</p>
+                    <div class="step-content mt-4" id="doc-4-content">
+                        <div class="p-3 rounded text-xs" style="background: var(--black-bg-dark); color: var(--light-gray); max-height: 200px; overflow-y: auto;">
+                            <p class="font-bold mb-2" style="color: var(--coral);">Sample: Loan Application Services</p>
+                            <p class="mb-2"><strong>Innovation:</strong> Aspect-Oriented Validation Framework - externalizes business rules into reusable, composable aspects</p>
+                            <p class="mb-2"><strong>Strength:</strong> Soft deletion with audit preservation maintains compliance while ensuring performance</p>
+                            <p><strong>Key Insight:</strong> Multi-tier caching provides local benefits while ensuring distributed cache consistency</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Document 5 -->
+                <div class="workflow-step clickable p-6 rounded-lg" id="doc-5" onclick="toggleDoc(5)" style="background: var(--dark-teal-bg-light); border-top: 4px solid var(--primary-gold);">
+                    <h4 class="font-bold mb-3" style="color: var(--primary-gold);">🏗️ Document 5</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Architecture</p>
+                    <p class="text-sm" style="color: var(--light-gray);">System design, patterns, relationships</p>
+                    <div class="step-content mt-4" id="doc-5-content">
+                        <div class="p-3 rounded text-xs" style="background: var(--black-bg-dark); color: var(--light-gray); max-height: 200px; overflow-y: auto;">
+                            <p class="font-bold mb-2" style="color: var(--primary-gold);">Sample: Loan Application Services</p>
+                            <p class="mb-2"><strong>Architecture:</strong> Microservices pattern built on Spring Boot - scalable, maintainable, resilient</p>
+                            <p class="mb-2"><strong>Core Components:</strong> Application Service Main (orchestrator), Bank Service Main (shared functionality), Garanti/Akbank Services (bank-specific)</p>
+                            <p><strong>Integration:</strong> Service discovery, Feign clients, notification systems, Redis caching layer</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Output -->
+                <div class="p-6 rounded-lg" style="background: var(--sage-bg); border-top: 4px solid var(--sage);">
+                    <h4 class="font-bold mb-3" style="color: var(--coral);">📊 Total Output</h4>
+                    <p class="font-semibold mb-2" style="color: var(--light-gray);">Per Capability</p>
+                    <p class="text-sm" style="color: var(--light-gray);">5 comprehensive documents ready for Twist</p>
+                </div>
+            </div>
+
+            <script>
+                function toggleDoc(docNum) {
+                    const doc = document.getElementById('doc-' + docNum);
+                    const content = document.getElementById('doc-' + docNum + '-content');
+                    doc.classList.toggle('active');
+                    content.classList.toggle('expanded');
+                }
+            </script>
+        </section>
+
+        <!-- Proof of Concept Results -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-white mb-6 section-title">Proof of Concept Results</h2>
+            <p class="text-lg text-gray-300 mb-8">We tested this entire pipeline on a real legacy codebase to validate the approach:</p>
+
+            <div class="bg-slate-800/50 p-8 rounded-lg mb-8 border-l-4 border-amber-500">
+                <h3 class="text-2xl font-bold text-amber-400 mb-4">Test Dataset: Retail-Banking Repository</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-900 p-4 rounded text-center">
+                        <p class="text-gray-400 text-sm mb-2">Repository Type</p>
+                        <p class="text-2xl font-bold text-amber-400">Spring Boot</p>
+                        <p class="text-gray-400 text-xs">Loan Management System</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded text-center">
+                        <p class="text-gray-400 text-sm mb-2">Capabilities Identified</p>
+                        <p class="text-2xl font-bold text-amber-400">56</p>
+                        <p class="text-gray-400 text-xs">Via CodeConcise API</p>
+                    </div>
+                    <div class="bg-slate-900 p-4 rounded text-center">
+                        <p class="text-gray-400 text-sm mb-2">Documents Generated</p>
+                        <p class="text-2xl font-bold text-amber-400">280</p>
+                        <p class="text-gray-400 text-xs">56 capabilities × 5 docs</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="text-2xl font-bold text-white mb-6">Key Performance Metrics</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-slate-800/50 p-6 rounded-lg border-l-4 border-green-500">
+                    <p class="text-gray-400 text-sm mb-2">Total Processing Time</p>
+                    <p class="text-4xl font-bold text-green-400 mb-2">3.5 hrs</p>
+                    <p class="text-gray-300 text-sm">For all 56 capabilities</p>
+                </div>
+                <div class="bg-slate-800/50 p-6 rounded-lg border-l-4 border-blue-500">
+                    <p class="text-gray-400 text-sm mb-2">Documents Generated</p>
+                    <p class="text-4xl font-bold text-blue-400 mb-2">280</p>
+                    <p class="text-gray-300 text-sm">5 docs per capability</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="mb-16 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-700/50 p-10 rounded-lg">
+            <h2 class="text-3xl font-bold text-white mb-6">Conclusion: A Proven Approach</h2>
+            <p class="text-lg text-gray-300 mb-6">We have successfully demonstrated that intelligent reverse engineering can automate legacy code analysis and documentation generation. The pipeline works as follows:</p>
+
+            <div class="space-y-4 text-gray-300 mb-8">
+                <p><strong>1. CodeConcise</strong> ingests a legacy codebase and builds a knowledge graph</p>
+                <p><strong>2. Capability Doc Generator Agent</strong> automatically extracts and documents all business capabilities from CodeConcise</p>
+                <p><strong>3. Twist</strong> generates modernized microservices directly from the generated documentation</p>
+            </div>
+
+            <div class="bg-slate-900 p-6 rounded-lg border-l-4 border-green-500">
+                <p class="text-gray-300 mb-4"><strong>Proof of Concept Results:</strong></p>
+                <ul class="space-y-2 text-gray-300">
+                    <li>✓ 56 capabilities documented automatically</li>
+                    <li>✓ 280 structured documents generated</li>
+                    <li>✓ 3.5 hours total processing time</li>
+                    <li>✓ Production-ready system</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Team Credits -->
+        <section class="mb-16 bg-slate-800/50 p-8 rounded-lg border-l-4 border-blue-500">
+            <h2 class="text-2xl font-bold text-white mb-6 text-center">Experiment Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-900 p-6 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-amber-400 mb-3">CodeConcise Team</h3>
+                    <p class="text-gray-300 text-lg">Siva Prakash</p>
+                </div>
+                <div class="bg-slate-900 p-6 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-3">Twist Team</h3>
+                    <p class="text-gray-300 text-lg">Sita Sowmya & Crys</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center pt-8 pb-8">
+        </footer>
+
+    </div>
+</body>
+</html>
+
